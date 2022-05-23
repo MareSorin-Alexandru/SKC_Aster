@@ -56,11 +56,11 @@ There are 4 kinds of power-ups available in the game, color coded as following:
 
 YELLOW – multiplies the current score by 110%
 
-GREEN – adds 1 hp to the player
+GREEN – adds 1 hp to the player - even beyond the standard maximum
 
 RED – Detonates a nuke which does not hurt the player
 
-WHITE – Adds to the autocannon maximum ammo count and decreases ammo replenishment rate for the autocannon
+WHITE – Adds to the autocannon maximum ammo count and increases ammo replenishment rate for the autocannon
 
 
 Special Thanks to Bojor Barbu for contributing with the cosmic art assets:
