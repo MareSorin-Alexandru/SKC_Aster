@@ -3,6 +3,7 @@ package game1;
 import utilities.*;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Game {
@@ -25,7 +26,7 @@ public class Game {
     boolean done = false;
 
     //buffers
-    ArrayList<Asteroid> asteroid_buffer = new ArrayList<>(20);
+    List<Asteroid> asteroid_buffer = new LinkedList<Asteroid>();
 
     public Game(BasicKeys ctrl) {
 
@@ -33,19 +34,19 @@ public class Game {
         this.ctrl = ctrl;
         score = 0;
         ship = new PlayerShip(ctrl.action);
-        p_bullets = new ArrayList<Bullet>(50);
-        powerUPS = new ArrayList<>(6);
+        p_bullets = new LinkedList<Bullet>();
+        powerUPS = new LinkedList<PowerUP>();
 
         //ships
-        ships = new ArrayList<>(5);
+        ships = new LinkedList<AIShip>();
         for (int i = 0; i < enemies_n; i++)
         {
             ships.add(new AIShip(new Vector2D(300,500),this));
         }
-        enemy_bullets = new ArrayList<>(80);
+        enemy_bullets = new LinkedList<Bullet>();
 
         //asteroids
-        asteroids = new ArrayList<Asteroid>(300);
+        asteroids = new LinkedList<Asteroid>();
         for (int i = 0; i < asteroid_n; i++) {
             asteroids.add(Asteroid.makeRandomAsteroid());
         }
@@ -117,11 +118,14 @@ public class Game {
             b.update();
 
         //HIT DETECTION
-
+        //aux vars
+        double aux_x, aux_y;
         //powerups
         for (PowerUP p : powerUPS)
         {
-            if (p.radius+ship.radius > p.position.dist(ship.position))
+            aux_x =  p.position.x-ship.position.x;
+            aux_y = p.position.y-ship.position.y;
+            if ( p.radius*p.radius + 2*p.radius*ship.radius + ship.radius*ship.radius >= aux_x*aux_x + aux_y*aux_y )
             {
                 p.hit();
                 switch (p.type)
@@ -151,7 +155,9 @@ public class Game {
         for (int i = 0; i < asteroids.size(); i++)
             for (int j = 0; j < ships.size(); j++)
             {
-                if(asteroids.get(i).radius + ships.get(j).radius > ships.get(j).position.dist(asteroids.get(i).position))
+                aux_x = asteroids.get(i).position.x-ships.get(j).position.x;
+                aux_y = asteroids.get(i).position.y-ships.get(j).position.y;
+                if(asteroids.get(i).radius*asteroids.get(i).radius + 2*asteroids.get(i).radius*ships.get(j).radius + ships.get(j).radius*ships.get(j).radius >= aux_x*aux_x + aux_y*aux_y )
                 {
                     asteroids.get(i).hit();
                     ships.get(j).hit();
@@ -160,7 +166,9 @@ public class Game {
 
         for (Asteroid a : asteroids)
         {
-            if (a.radius+ship.radius >ship.position.dist(a.position))
+            aux_x = ship.position.x-a.position.x;
+            aux_y = ship.position.y-a.position.y;
+            if ( a.radius*a.radius + 2*a.radius+ship.radius + ship.radius*ship.radius >= aux_x*aux_x + aux_y*aux_y)
             {
                 a.hit();
                 ship.hit();
@@ -175,7 +183,9 @@ public class Game {
         {
             for( int j = 0; j < asteroids.size(); j++)
             {
-                if (p_bullets.get(i).radius + asteroids.get(j).radius > p_bullets.get(i).position.dist(asteroids.get(j).position))
+                aux_x = p_bullets.get(i).position.x-asteroids.get(j).position.x;
+                aux_y = p_bullets.get(i).position.y-asteroids.get(j).position.y;
+                if (p_bullets.get(i).radius*p_bullets.get(i).radius + 2*p_bullets.get(i).radius*asteroids.get(j).radius + asteroids.get(j).radius*asteroids.get(j).radius >= aux_x*aux_x + aux_y*aux_y)
                 {
                     p_bullets.get(i).hit();
                     asteroids.get(j).hit();
@@ -189,7 +199,9 @@ public class Game {
         {
             for( int j = 0; j < asteroids.size(); j++)
             {
-                if (enemy_bullets.get(i).radius + asteroids.get(j).radius > enemy_bullets.get(i).position.dist(asteroids.get(j).position))
+                aux_x = enemy_bullets.get(i).position.x-asteroids.get(j).position.x;
+                aux_y = enemy_bullets.get(i).position.y-asteroids.get(j).position.y;
+                if (enemy_bullets.get(i).radius*enemy_bullets.get(i).radius + 2*enemy_bullets.get(i).radius*asteroids.get(j).radius + asteroids.get(j).radius*asteroids.get(j).radius >= aux_x*aux_x + aux_y*aux_y )
                 {
                     enemy_bullets.get(i).hit();
                     asteroids.get(j).hit();
@@ -199,7 +211,10 @@ public class Game {
 
         //ships and player
         for (Ship s : ships)
-            if (s.radius+ship.radius>s.position.dist(ship.position))
+        {
+            aux_x = s.position.x-ship.position.x;
+            aux_y = s.position.y-ship.position.y;
+            if (s.radius*s.radius + 2*s.radius*ship.radius + ship.radius*ship.radius >= aux_x*aux_x + aux_y*aux_y)
             {
                 s.hit();
                 ship.hit();
@@ -207,12 +222,15 @@ public class Game {
                 if (Math.random()>0.8)
                     powerUPS.add(new PowerUP(new Vector2D(ship.position),(int)(Math.random()*4),900));
             }
+        }
 
         //bullets and ships
         for (int i = 0; i < p_bullets.size(); i++)
             for (int j = 0; j < ships.size(); j++)
             {
-                if (p_bullets.get(i).radius+ships.get(j).radius>p_bullets.get(i).position.dist(ships.get(j).position))
+                aux_x = p_bullets.get(i).position.x-ships.get(j).position.x;
+                aux_y = p_bullets.get(i).position.y-ships.get(j).position.y;
+                if (p_bullets.get(i).radius*p_bullets.get(i).radius + 2*p_bullets.get(i).radius*ships.get(j).radius +ships.get(j).radius*ships.get(j).radius >= aux_x*aux_x + aux_y*aux_y)
                 {
                     p_bullets.get(i).hit();
                     ships.get(j).hit();
@@ -222,11 +240,15 @@ public class Game {
                 }
             }
         for (Bullet b : enemy_bullets)
-            if (b.radius+ship.radius>b.position.dist(ship.position))
+        {
+            aux_x = b.position.x-ship.position.x;
+            aux_y = b.position.y-ship.position.y;
+            if (b.radius*b.radius + 2*b.radius*ship.radius +ship.radius*ship.radius >= aux_x*aux_x + aux_y*aux_y)
             {
                 ship.hit();
                 b.hit();
             }
+        }
 
     }
 
