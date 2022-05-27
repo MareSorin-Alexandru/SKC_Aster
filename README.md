@@ -65,3 +65,5 @@ WHITE – Adds to the autocannon maximum ammo count and increases ammo replenish
 
 Special Thanks to Bojor Barbu for contributing with the cosmic art assets:
 https://gitlab.com/bbojor
+
+Special Thanks to Tom and Graeme for spotting some ineficiencies in my code and offering solutions.
